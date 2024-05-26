@@ -1,0 +1,30 @@
+from sklearn.ensemble import RandomForestRegressor
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.impute import SimpleImputer
+
+# Read the dataset
+data = pd.read_csv(r"C:\Users\My PC\Downloads\Parkinsson disease.csv", encoding='latin1')
+
+# Define the feature columns and target column
+feature_columns = ['MDVP:Fo(Hz)', 'MDVP:Fhi(Hz)', 'MDVP:Flo(Hz)', 'MDVP:Jitter(%)', 'MDVP:Jitter(Abs)', 'MDVP:RAP', 'MDVP:PPQ', 'Jitter:DDP', 'MDVP:Shimmer', 'MDVP:Shimmer(dB)', 'Shimmer:APQ3', 'Shimmer:APQ5', 'MDVP:PPQ', 'MDVP:APQ', 'Shimmer:DDA', 'NHR', 'HNR']
+target_column = 'PPE'
+
+# Separate the features and target variable
+X = data[feature_columns]
+y = data[target_column]
+
+# Create an instance of SimpleImputer
+imputer = SimpleImputer(strategy='mean')
+
+# Fit the imputer on X and transform X
+X = imputer.fit_transform(X)
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, random_state=42)
+
+regressor = RandomForestRegressor(n_estimators=100, random_state=0, max_depth=10, min_samples_split=5, min_samples_leaf=2)
+regressor.fit(X_train, y_train)
+
+print("Accuracy on training set: {:.3f}".format(regressor.score(X_train, y_train)))
+print("Accuracy on test set: {:.3f}".format(regressor.score(X_test, y_test)))
